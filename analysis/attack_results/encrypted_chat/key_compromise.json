@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.790339,
+    "attack_name": "key_compromise",
+    "mode": "encrypted_chat",
+    "observed_data": "Decrypted 3/3 historical messages",
+    "result": "entire session exposed",
+    "security_impact": "High - Static session key compromises all past history"
+}

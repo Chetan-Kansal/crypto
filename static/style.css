@@ -1,0 +1,335 @@
+:root {
+    --primary-color: #00ff41; /* Neon Hacker Green */
+    --bg-color: #0a0a0a;
+    --panel-bg: rgba(15, 15, 15, 0.85); /* Glassmorphism */
+    --text-color: #e0e0e0;
+    --border-color: #00ff41; /* Neon Borders */
+    --hover-color: rgba(0, 255, 65, 0.2);
+}
+
+body {
+    font-family: 'Fira Code', monospace;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Three.js Background Canvas */
+#cyber-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0px 4px 15px rgba(0, 255, 65, 0.2);
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px var(--primary-color);
+}
+
+.btn {
+    background: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Fira Code', monospace;
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background: var(--primary-color);
+    color: #000;
+    box-shadow: 0 0 20px var(--primary-color);
+}
+
+.flashes { list-style: none; padding: 0; margin: 0 0 10px; }
+.flashes li { padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-bottom: 6px; }
+.flashes .error   { background: rgba(255,68,68,.15); border: 1px solid #ff4444; color: #ff8888; }
+.flashes .success { background: rgba(0,255,65,.1);   border: 1px solid #00ff41; color: var(--primary-color); }
+
+a { color: var(--primary-color); text-decoration: none; }
+a:hover { text-shadow: 0 0 6px var(--primary-color); }
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.auth-form {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+    width: 100%;
+    max-width: 400px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-form h2 {
+    color: var(--primary-color);
+    text-align: center;
+    margin: 0;
+    text-shadow: 0 0 10px var(--primary-color);
+    font-size: 2em;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: var(--primary-color);
+    font-size: 0.9em;
+}
+
+.form-group input {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1em;
+    outline: none;
+    transition: box-shadow 0.3s;
+}
+
+.form-group input:focus {
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+}
+
+.auth-form button {
+    margin-top: 10px;
+    font-size: 1.2em;
+    padding: 12px;
+}
+
+.auth-form p {
+    text-align: center;
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+.auth-form a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.auth-form a:hover {
+    text-decoration: underline;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.chat-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.users-list {
+    width: 250px;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 20, 0, 0.6);
+}
+
+.users-list h3 {
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-color);
+}
+
+.users-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.users-list li {
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.users-list li:hover, .users-list li.active {
+    background: var(--hover-color);
+    border-left: 4px solid var(--primary-color);
+}
+
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-area h3 {
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-color);
+}
+
+.messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 4px;
+    border: 1px solid;
+}
+
+.message.sent {
+    align-self: flex-end;
+    background: rgba(0, 255, 65, 0.1);
+    border-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+}
+
+.message.received {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #555;
+    color: #fff;
+}
+
+.message .sender {
+    font-size: 0.8em;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.input-area {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 10px;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--primary-color);
+    font-family: 'Fira Code', monospace;
+    outline: none;
+}
+
+.input-area input:focus {
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+/* Security Badge */
+.security-badge {
+    background: rgba(0, 255, 65, 0.1);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--primary-color);
+    box-shadow: 0 4px 10px rgba(0, 255, 65, 0.1);
+}
+
+.security-badge .badge-title {
+    font-weight: bold;
+}
+
+/* Logging Area */
+.log-area {
+    width: 350px;
+    border-left: 1px solid var(--border-color);
+    background: rgba(0, 10, 0, 0.8);
+    color: var(--primary-color);
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+}
+
+.log-area h3 {
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid var(--border-color);
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+}
+
+#packet-logs {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    overflow-y: auto;
+    flex: 1;
+    word-break: break-all;
+}
+
+#packet-logs li {
+    margin-bottom: 8px;
+    border-bottom: 1px dashed rgba(0, 255, 65, 0.3);
+    padding-bottom: 8px;
+}

@@ -1,0 +1,53 @@
+/*
+ * Secure Protocol Model (Ephemeral DH + AES-GCM + Rotation)
+ * Models Ephemeral Diffie-Hellman key exchange and message encryption.
+ * Note: Scyther abstracts mathematical DH. We model it via exchanging nonces 
+ * encrypted under long-term keys to simulate authenticated DH.
+ */
+
+hashfunction HKDF;
+
+protocol SecureChat(I, R) {
+    role I {
+        fresh x: Nonce;      /* Alice's ephemeral DH private component */
+        var y: Nonce;        /* Bob's ephemeral DH public component */
+        fresh msg: Nonce;    /* The chat message */
+        
+        /* Exchange Ephemeral Keys (simulated with Public Key encryption for authentication) */
+        send_1(I, R, {x}pk(R));
+        recv_2(R, I, {y}pk(I));
+        
+        /* Derive Session Key */
+        macro SessionKey = HKDF(x, y);
+        
+        /* Send Encrypted Message */
+        send_3(I, R, {msg}SessionKey);
+        
+        /* Claims */
+        claim(I, Secret, SessionKey);
+        claim(I, Secret, msg);
+        claim(I, Alive);
+        claim(I, Weakagree);
+        claim(I, Nisynch); /* Replay resistance */
+    }
+    
+    role R {
+        var x: Nonce;
+        fresh y: Nonce;
+        var msg: Nonce;
+        
+        recv_1(I, R, {x}pk(R));
+        send_2(R, I, {y}pk(I));
+        
+        macro SessionKey = HKDF(x, y);
+        
+        recv_3(I, R, {msg}SessionKey);
+        
+        /* Claims */
+        claim(R, Secret, SessionKey);
+        claim(R, Secret, msg);
+        claim(R, Alive);
+        claim(R, Weakagree);
+        claim(R, Nisynch); /* Replay resistance */
+    }
+}

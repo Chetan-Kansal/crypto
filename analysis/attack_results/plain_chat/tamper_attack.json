@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901711.4620612,
+    "attack_name": "tamper_attack",
+    "mode": "plain_chat",
+    "observed_data": "Modified plaintext accepted",
+    "result": "accepted",
+    "security_impact": "High - No integrity checks"
+}

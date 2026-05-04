@@ -1,0 +1,34 @@
+/*
+ * Insecure Protocol Model (Static Key)
+ * Simulates a system where users communicate using a long-term static symmetric key.
+ */
+
+usertype String;
+
+protocol InsecureChat(I, R) {
+    role I {
+        fresh msg: String;
+        var K: SessionKey; /* Represents static shared key */
+        
+        send_1(I, R, {msg}K);
+        
+        /* Claims */
+        claim(I, Secret, msg);
+        claim(I, Alive);
+        claim(I, Weakagree);
+        claim(I, Nisynch); /* This will fail: No replay protection */
+    }
+    
+    role R {
+        var msg: String;
+        var K: SessionKey;
+        
+        recv_1(I, R, {msg}K);
+        
+        /* Claims */
+        claim(R, Secret, msg);
+        claim(R, Alive);
+        claim(R, Weakagree);
+        claim(R, Nisynch); /* This will fail: No replay protection */
+    }
+}

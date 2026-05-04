@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.39293,
+    "attack_name": "db_leak",
+    "mode": "plain_chat",
+    "observed_data": "['Hello Top Secret Project', 'Hello Top Secret Project', 'Hello Top Secret Project']",
+    "result": "full chat history exposed",
+    "security_impact": "Critical - All past data leaked"
+}

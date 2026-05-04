@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901711.2576032,
+    "attack_name": "replay_attack",
+    "mode": "encrypted_chat",
+    "observed_data": "Ciphertext accepted (AES-GCM checks integrity, but not sequence natively without tracking)",
+    "result": "may be accepted",
+    "security_impact": "Moderate - Dependent on application-level nonce tracking"
+}

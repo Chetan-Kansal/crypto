@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901711.3617358,
+    "attack_name": "replay_attack",
+    "mode": "forward_secret_chat",
+    "observed_data": "Replayed packet failed decryption (Old Key invalidated)",
+    "result": "rejected",
+    "security_impact": "Low - Key rotation inherently prevents long-term replays"
+}

@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901711.162273,
+    "attack_name": "replay_attack",
+    "mode": "plain_chat",
+    "observed_data": "Replayed plaintext packet successfully",
+    "result": "accepted",
+    "security_impact": "High - Receiver processes duplicate message"
+}

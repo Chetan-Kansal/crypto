@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.224906,
+    "attack_name": "passive_sniffer",
+    "mode": "encrypted_chat",
+    "observed_data": "K2GU6tMWo8kd9fH86GY1yFlvyp9gvh1ApUiR/GPvjEdR9YIoTE3xkXoreYOJuaKoVRcg9g==",
+    "result": "ciphertext only",
+    "security_impact": "Low - Confidentiality preserved via AES-GCM"
+}

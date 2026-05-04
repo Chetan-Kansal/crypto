@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.610327,
+    "attack_name": "db_leak",
+    "mode": "forward_secret_chat",
+    "observed_data": "['/wWH8BAT1k9zQY5LasD6T28tm98WTcMYw+scAAF/QnUG', '/FQ8sgJp+Q3S5rTRd+riLlgcumDx0fgMuM/PDfYhTPU5', 'Al47OXaU2L1chawEjhthe5qH+6EC0q1/ZLVeFZnaVp5n']",
+    "result": "ciphertext only",
+    "security_impact": "Low - Ciphertexts leaked, securely unreadable without ephemeral keys"
+}

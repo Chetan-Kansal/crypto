@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="users-list">
+        <h3>Users</h3>
+        <ul id="users">
+            {% for user in users %}
+                <li data-id="{{ user.id }}" data-username="{{ user.username }}" class="user-item">
+                    {{ user.username }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="chat-area" id="chat-area" style="display: none;">
+        <h3 id="chat-with">Chat with User</h3>
+        
+        <!-- Live Key Rotation Visualizer -->
+        <div class="security-badge" id="security-badge">
+            <span class="badge-title">🔐 Secure Session</span>
+            <span>AES-GCM Key: <strong id="key-fingerprint">NONE</strong></span>
+            <span>Rotation in: <strong id="key-rotation-count">5</strong> msgs</span>
+            <button class="btn" id="verify-btn" style="padding: 2px 8px; font-size: 10px;">Verify Identity</button>
+        </div>
+        
+        <div class="messages" id="messages">
+            <!-- Messages will appear here -->
+        </div>
+        <div class="input-area">
+            <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
+            <button id="send-btn" class="btn">Send</button>
+        </div>
+    </div>
+    
+    <div class="log-area" id="log-area">
+        <h3>Packet Display & Logs</h3>
+        <ul id="packet-logs"></ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const currentUserId = {{ session.get('user_id') }};
+    const currentUsername = "{{ session.get('username') }}";
+</script>
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+{% endblock %}

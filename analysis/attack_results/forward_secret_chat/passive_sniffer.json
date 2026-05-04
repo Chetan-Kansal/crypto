@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.312727,
+    "attack_name": "passive_sniffer",
+    "mode": "forward_secret_chat",
+    "observed_data": "uuaMuM0auzSWPErNu0/E4ZuihCSIWnjMDa44axn1nqod2P+UvsKNVmIIl3jbarnUYwF0rg== (with periodic rekey events)",
+    "result": "ciphertext only",
+    "security_impact": "Low - Confidentiality preserved with perfect forward secrecy"
+}

@@ -1,0 +1,27 @@
+{
+  "Passive Eavesdropping": {
+    "plain_chat": "plaintext visible",
+    "encrypted_chat": "ciphertext only",
+    "forward_secret_chat": "ciphertext only"
+  },
+  "Database Leak": {
+    "plain_chat": "full chat history exposed",
+    "encrypted_chat": "ciphertext only",
+    "forward_secret_chat": "ciphertext only"
+  },
+  "Session Key Compromise": {
+    "plain_chat": "not applicable",
+    "encrypted_chat": "entire session exposed",
+    "forward_secret_chat": "only current key window exposed"
+  },
+  "Replay Attack": {
+    "plain_chat": "accepted",
+    "encrypted_chat": "may be accepted",
+    "forward_secret_chat": "rejected"
+  },
+  "Message Tampering": {
+    "plain_chat": "accepted",
+    "encrypted_chat": "rejected",
+    "forward_secret_chat": "rejected"
+  }
+}

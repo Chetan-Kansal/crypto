@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.147115,
+    "attack_name": "passive_sniffer",
+    "mode": "plain_chat",
+    "observed_data": "Hello Top Secret Project",
+    "result": "plaintext visible",
+    "security_impact": "Critical - Full confidentiality loss"
+}

@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901711.570356,
+    "attack_name": "tamper_attack",
+    "mode": "encrypted_chat",
+    "observed_data": "AES-GCM Authentication Tag verification failed.",
+    "result": "rejected",
+    "security_impact": "Low - Integrity strictly preserved by AES-GCM"
+}

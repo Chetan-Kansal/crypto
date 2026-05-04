@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.979429,
+    "attack_name": "key_compromise",
+    "mode": "forward_secret_chat",
+    "observed_data": "Decrypted 1/3 historical messages",
+    "result": "only current key window exposed",
+    "security_impact": "Low - Forward secrecy successfully protected older messages"
+}

@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.496898,
+    "attack_name": "db_leak",
+    "mode": "encrypted_chat",
+    "observed_data": "['WFjo1E9u2soa1avqpYfSK1aIjYpHphjxTRVIVDT7gIeE', 'FUJed4TojZ4MJpjEvKd8uTENrd57pzcbBgtuNNC2wpWk', 'pGEku6/UM4+s16GUemKs+eUfNwGYzCwO0xstAWTSFjSl']",
+    "result": "ciphertext only",
+    "security_impact": "Moderate - Ciphertexts leaked, but secure unless static key compromised"
+}

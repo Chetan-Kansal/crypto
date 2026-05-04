@@ -1,0 +1,8 @@
+{
+    "timestamp": 1777901710.6997209,
+    "attack_name": "key_compromise",
+    "mode": "plain_chat",
+    "observed_data": "Not Applicable - No key exists",
+    "result": "not applicable",
+    "security_impact": "Critical - Always readable"
+}

@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='visualizer.css') }}">
+
+<div class="viz-page" id="viz-page">
+
+    <!-- TAB NAV -->
+    <div class="viz-tabs">
+        <button class="viz-tab active" onclick="showViz('live', this)">🔴 LIVE Feed</button>
+        <button class="viz-tab" onclick="showViz('dh', this)">① DH Key Exchange</button>
+        <button class="viz-tab" onclick="showViz('aes', this)">② AES Encryption</button>
+        <button class="viz-tab" onclick="showViz('fs', this)">③ Forward Secrecy</button>
+        <button class="viz-tab" onclick="showViz('matrix', this)">④ Attack Matrix</button>
+        <button class="viz-tab" onclick="showViz('scyther', this)">⑤ Scyther Verification</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 0 — LIVE REAL-TIME FEED
+         ═══════════════════════════════════════════════════ -->
+    <div class="viz-section active" id="sec-live">
+        <div class="viz-card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+            <h2>🔴 Live Cryptographic Event Feed</h2>
+            <p class="subtitle">
+                Events stream in real-time as messages are sent in the chat.
+                Open <a href="/chat" target="_blank">the chat</a> in another tab and send a message to see it live.
+            </p>
+
+            <!-- Status bar -->
+            <div id="live-status-bar" style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px;">
+                <div class="live-stat-box" id="lsb-conn">
+                    <span class="lsb-label">WebSocket</span>
+                    <span class="lsb-value" id="lsb-conn-val">Connecting…</span>
+                </div>
+                <div class="live-stat-box" id="lsb-sessions">
+                    <span class="lsb-label">Active Sessions</span>
+                    <span class="lsb-value" id="lsb-sessions-val">0</span>
+                </div>
+                <div class="live-stat-box" id="lsb-msgs">
+                    <span class="lsb-label">Messages Seen</span>
+                    <span class="lsb-value" id="lsb-msgs-val">0</span>
+                </div>
+                <div class="live-stat-box" id="lsb-rotations">
+                    <span class="lsb-label">Key Rotations</span>
+                    <span class="lsb-value" id="lsb-rotations-val">0</span>
+                </div>
+                <div class="live-stat-box">
+                    <span class="lsb-label">Current Key</span>
+                    <span class="lsb-value" id="lsb-fingerprint">—</span>
+                </div>
+                <div class="live-stat-box">
+                    <span class="lsb-label">Until Rotation</span>
+                    <span class="lsb-value" id="lsb-until-rotation">—</span>
+                </div>
+            </div>
+
+            <!-- Live pipeline diagram (always visible) -->
+            <div class="live-pipeline" id="live-pipeline">
+                <div class="pipeline-stage" id="pipe-dh">
+                    <div class="pipe-icon">🔑</div>
+                    <div class="pipe-label">ECDH</div>
+                    <div class="pipe-status idle" id="pipe-dh-dot"></div>
+                </div>
+                <div class="pipe-connector">──▶</div>
+                <div class="pipeline-stage" id="pipe-hkdf">
+                    <div class="pipe-icon">🔬</div>
+                    <div class="pipe-label">HKDF</div>
+                    <div class="pipe-status idle" id="pipe-hkdf-dot"></div>
+                </div>
+                <div class="pipe-connector">──▶</div>
+                <div class="pipeline-stage" id="pipe-enc">
+                    <div class="pipe-icon">🔒</div>
+                    <div class="pipe-label">AES-GCM Enc</div>
+                    <div class="pipe-status idle" id="pipe-enc-dot"></div>
+                </div>
+                <div class="pipe-connector">──▶</div>
+                <div class="pipeline-stage" id="pipe-net">
+                    <div class="pipe-icon">📡</div>
+                    <div class="pipe-label">Network</div>
+                    <div class="pipe-status idle" id="pipe-net-dot"></div>
+                </div>
+                <div class="pipe-connector">──▶</div>
+                <div class="pipeline-stage" id="pipe-dec">
+                    <div class="pipe-icon">🔓</div>
+                    <div class="pipe-label">AES-GCM Dec</div>
+                    <div class="pipe-status idle" id="pipe-dec-dot"></div>
+                </div>
+            </div>
+
+            <!-- Last message detail card -->
+            <div id="live-detail-card" style="display:none;" class="live-detail-card">
+                <div class="ldc-row"><span class="ldc-key">📝 Plaintext</span><span class="ldc-val" id="ldc-plain">—</span></div>
+                <div class="ldc-row"><span class="ldc-key">📌 IV (Nonce)</span><span class="ldc-val ldc-hex" id="ldc-iv">—</span></div>
+                <div class="ldc-row"><span class="ldc-key">🔒 Ciphertext</span><span class="ldc-val ldc-hex" id="ldc-ct">—</span></div>
+                <div class="ldc-row"><span class="ldc-key">🔏 Auth Tag</span><span class="ldc-val ldc-hex" id="ldc-tag">—</span></div>
+                <div class="ldc-row"><span class="ldc-key">🔑 Key Fingerprint</span><span class="ldc-val" id="ldc-fp">—</span></div>
+            </div>
+
+            <!-- Event log -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; margin-bottom:6px;">
+                <span style="font-size:11px; color:#888;">Event log (newest first)</span>
+                <button class="step-btn" onclick="clearLiveLog()">🗑 Clear</button>
+            </div>
+            <div id="live-log" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:6px; max-height:340px; padding-right:4px;">
+                <div class="live-event idle-msg">⏳ Waiting for chat activity… Open the chat and send a message!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 1 — Diffie-Hellman Key Exchange
+         ═══════════════════════════════════════════════════ -->
+    <div class="viz-section" id="sec-dh">
+        <div class="viz-card">
+            <h2>① Diffie–Hellman Key Exchange Visualizer</h2>
+            <p class="subtitle">Step through how Alice &amp; Bob establish a shared secret without ever transmitting it. The attacker sees only public values.</p>
+
+            <div class="dh-arena">
+                <!-- Alice -->
+                <div class="dh-actor">
+                    <h3>👩 Alice</h3>
+                    <div class="dh-value secret" id="dh-a-priv">🔴 Private Key (a): <code>7</code></div>
+                    <div class="dh-value public" id="dh-a-pub">🔵 Public Key (g^a mod p): <code>g^7 mod p = <b>82</b></code></div>
+                    <div class="dh-value secret" id="dh-a-shared">🟢 Shared Secret: <code>(g^b)^a mod p = <b>K</b></code></div>
+                </div>
+
+                <!-- Channel -->
+                <div class="dh-channel">
+                    <div class="dh-arrow" id="dh-arr1">⟶<br><span style="font-size:9px;color:#4da6ff;">A_pub</span></div>
+                    <div class="dh-arrow" id="dh-arr2">⟵<br><span style="font-size:9px;color:#4da6ff;">B_pub</span></div>
+                </div>
+
+                <!-- Bob -->
+                <div class="dh-actor">
+                    <h3>👨 Bob</h3>
+                    <div class="dh-value secret" id="dh-b-priv">🔴 Private Key (b): <code>5</code></div>
+                    <div class="dh-value public" id="dh-b-pub">🔵 Public Key (g^b mod p): <code>g^5 mod p = <b>57</b></code></div>
+                    <div class="dh-value secret" id="dh-b-shared">🟢 Shared Secret: <code>(g^a)^b mod p = <b>K</b></code></div>
+                </div>
+            </div>
+
+            <!-- Attacker strip -->
+            <div class="attacker-strip">
+                <h4>🕵️ Attacker (Eve) — Network View</h4>
+                <div id="dh-eve">Eve sees: <em>Nothing yet (no traffic)</em></div>
+            </div>
+
+            <div class="step-label" id="dh-step-label">Press "Next Step" to begin the simulation.</div>
+
+            <div class="step-controls">
+                <button class="step-btn" id="dh-next" onclick="dhNext()">▶ Next Step</button>
+                <button class="step-btn" onclick="dhReset()">↺ Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 2 — AES Encryption Visualizer
+         ═══════════════════════════════════════════════════ -->
+    <div class="viz-section" id="sec-aes">
+        <div class="viz-card">
+            <h2>② AES-GCM Encryption / Decryption Visualizer</h2>
+            <p class="subtitle">See how a message travels from plaintext → ciphertext → plaintext via AES-GCM authenticated encryption.</p>
+
+            <div class="aes-arena">
+                <!-- Sender -->
+                <div class="aes-box">
+                    <h3>📤 Sender (Alice)</h3>
+                    <div class="aes-field plain"  id="aes-plain">Plaintext: <b>"Hello Bob!"</b></div>
+                    <div class="aes-field key"    id="aes-key">Session Key: <b>K = 0x3a8f…d2c1</b></div>
+                    <div class="aes-field"        id="aes-iv">IV (Random): <b>—</b></div>
+                    <div class="aes-field cipher" id="aes-enc">Ciphertext: <b>—</b></div>
+                    <div class="aes-field tag"    id="aes-tag">Auth Tag: <b>—</b></div>
+                </div>
+
+                <!-- Arrow 1 -->
+                <div class="aes-arrow" id="aes-arr1">→</div>
+
+                <!-- Server relay -->
+                <div class="aes-box" style="border-color:#555;justify-content:center;align-items:center;text-align:center;min-height:0;">
+                    <h3 style="color:#888;">🖥️ Server</h3>
+                    <div style="color:#555;font-size:11px;">Relay only.<br>Sees ciphertext.<br>Cannot read plaintext.</div>
+                    <div class="aes-field cipher" id="aes-relay" style="margin-top:10px;">—</div>
+                </div>
+
+                <!-- Arrow 2 -->
+                <div class="aes-arrow" id="aes-arr2">→</div>
+
+                <!-- Receiver -->
+                <div class="aes-box">
+                    <h3>📥 Receiver (Bob)</h3>
+                    <div class="aes-field cipher" id="aes-recv-cipher">Ciphertext: <b>—</b></div>
+                    <div class="aes-field tag"    id="aes-recv-tag">Auth Tag: <b>—</b></div>
+                    <div class="aes-field key"    id="aes-recv-key">Session Key: <b>K = 0x3a8f…d2c1</b></div>
+                    <div class="aes-field"        id="aes-result">Decrypted: <b>—</b></div>
+                </div>
+            </div>
+
+            <!-- Tamper toggle -->
+            <div class="tamper-toggle">
+                <input type="checkbox" id="tamper-check" onchange="aesToggleTamper()">
+                <label for="tamper-check">💀 Enable Tamper Attack (flip 1 bit in ciphertext)</label>
+            </div>
+
+            <div class="step-label" id="aes-step-label">Press "Encrypt" to start.</div>
+
+            <div class="step-controls">
+                <button class="step-btn" id="aes-encrypt-btn" onclick="aesEncrypt()">🔒 Encrypt &amp; Send</button>
+                <button class="step-btn" id="aes-decrypt-btn" onclick="aesDecrypt()" disabled>🔓 Decrypt at Receiver</button>
+                <button class="step-btn" onclick="aesReset()">↺ Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 3 — Forward Secrecy Timeline
+         ═══════════════════════════════════════════════════ -->
+    <div class="viz-section" id="sec-fs">
+        <div class="viz-card">
+            <h2>③ Forward Secrecy / Key Rotation Timeline</h2>
+            <p class="subtitle">Each key window covers N messages. When the attacker steals the CURRENT key, past windows remain protected by Forward Secrecy.</p>
+
+            <div class="fs-timeline" id="fs-timeline">
+                <!-- Rendered by JS -->
+            </div>
+
+            <div class="attacker-action" id="fs-attacker-action" style="display:none;">
+                <span>🕵️ Attacker steals</span>
+                <strong id="fs-stolen-key" style="font-size:13px;">—</strong>
+                <span>from server memory!</span>
+            </div>
+
+            <div class="step-label" id="fs-step-label">Press "Simulate Compromise" to show forward secrecy in action.</div>
+
+            <div class="step-controls">
+                <button class="step-btn" onclick="fsSimulate()">💥 Simulate Key Compromise</button>
+                <button class="step-btn" onclick="fsReset()">↺ Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 4 — Attack Matrix
+         ═══════════════════════════════════════════════════ -->
+    <div class="viz-section" id="sec-matrix">
+        <div class="viz-card">
+            <h2>④ Attack Comparison Matrix</h2>
+            <p class="subtitle">Color-coded results from experimental attack simulation. Hover each cell for details.</p>
+
+            <div class="matrix-grid">
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Attack Vector</th>
+                            <th>🔓 Plain Chat</th>
+                            <th>🔐 Encrypted Chat</th>
+                            <th>🛡️ Forward-Secret Chat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrix-body">
+                        <!-- Rendered by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 5 — Scyther Verification
+         ═══════════════════════════════════════════════════ -->
+    <div class="viz-section" id="sec-scyther">
+        <div class="viz-card">
+            <h2>⑤ Scyther Protocol Verification Results</h2>
+            <p class="subtitle">Symbolic adversary analysis of the protocol models. Scyther verifies secrecy, authentication, and replay resistance claims.</p>
+
+            <div class="scyther-cols">
+
+                <!-- Insecure Protocol -->
+                <div class="scyther-proto insecure">
+                    <h3>❌ Protocol A — Insecure (Static Key)</h3>
+                    <div class="scyther-flow">
+                        <div class="flow-step bad">I ──(msg, K)──→ R  [Static key, no nonce]</div>
+                        <div class="flow-step warn">No freshness, no replay protection</div>
+                        <div class="flow-step warn">Authentication: None</div>
+                    </div>
+                    <div class="attacker-path">
+                        <h4>🕵️ Attacker Replay Path</h4>
+                        <span>1. Eve captures {msg}K from Alice</span>
+                        <span>2. Eve replays {msg}K to Bob later</span>
+                        <span>3. Bob accepts — no counter/nonce</span>
+                        <span style="color:#ff8888;font-weight:bold;">→ Replay SUCCESS</span>
+                    </div>
+                    <div class="claims-list">
+                        <div class="claim-row"><span>Secret (msg)</span>      <span class="claim-pass">✅ PASS (symbolic)</span></div>
+                        <div class="claim-row"><span>Alive</span>              <span class="claim-fail">❌ FAIL</span></div>
+                        <div class="claim-row"><span>Weakagree</span>          <span class="claim-fail">❌ FAIL</span></div>
+                        <div class="claim-row"><span>Nisynch (Replay)</span>   <span class="claim-fail">❌ FAIL — Attack Found</span></div>
+                    </div>
+                </div>
+
+                <!-- Secure Protocol -->
+                <div class="scyther-proto secure">
+                    <h3>✅ Protocol B — Secure (Ephemeral DH)</h3>
+                    <div class="scyther-flow">
+                        <div class="flow-step info">I generates fresh nonce x</div>
+                        <div class="flow-step good">I ──{x}pk(R)──→ R  [Authenticated]</div>
+                        <div class="flow-step info">R generates fresh nonce y</div>
+                        <div class="flow-step good">R ──{y}pk(I)──→ I  [Authenticated]</div>
+                        <div class="flow-step good">SK = HKDF(x, y)  [Fresh each session]</div>
+                        <div class="flow-step good">I ──{msg}SK──→ R  [Encrypted + Auth]</div>
+                    </div>
+                    <div class="claims-list">
+                        <div class="claim-row"><span>Secret (SessionKey)</span>  <span class="claim-pass">✅ PASS</span></div>
+                        <div class="claim-row"><span>Secret (msg)</span>          <span class="claim-pass">✅ PASS</span></div>
+                        <div class="claim-row"><span>Alive</span>                  <span class="claim-pass">✅ PASS</span></div>
+                        <div class="claim-row"><span>Weakagree</span>              <span class="claim-pass">✅ PASS</span></div>
+                        <div class="claim-row"><span>Nisynch (Replay)</span>       <span class="claim-pass">✅ PASS — No Attack</span></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="margin-top:16px;padding:12px;border:1px solid var(--green);border-radius:6px;background:rgba(0,255,65,.05);font-size:12px;color:#aaa;">
+                <strong style="color:var(--green);">📋 Conclusion:</strong>
+                By introducing ephemeral nonces and public-key authenticated exchange, Protocol B eliminates all replay/impersonation vectors that Protocol A fails against.
+                The symbolic model directly corresponds to the implemented Ephemeral ECDH + HKDF + AES-GCM architecture in this project.
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='visualizer.js') }}"></script>
+{% endblock %}
