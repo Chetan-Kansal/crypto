@@ -158,32 +158,32 @@ let dhStep = 0;
 
 const DH_STEPS = [
     {
-        label: "Step 1: Alice generates her secret private key (a). This stays on her device ONLY.",
+        label: "Step 1: Alice generates her secret private key (a). Think of this as her Secret Color (e.g., Red). This stays on her device ONLY.",
         show: ['dh-a-priv'], arrows: [],
-        eve: "Eve sees: Nothing (private keys are never transmitted)"
+        eve: "Eve sees: Nothing (private keys / secret colors are never transmitted)"
     },
     {
-        label: "Step 2: Bob generates his secret private key (b). This also stays on his device ONLY.",
+        label: "Step 2: Bob generates his secret private key (b). Think of this as his Secret Color (e.g., Blue). This also stays on his device ONLY.",
         show: ['dh-b-priv'], arrows: [],
-        eve: "Eve sees: Nothing (private keys are never transmitted)"
+        eve: "Eve sees: Nothing (private keys / secret colors are never transmitted)"
     },
     {
-        label: "Step 3: Alice computes her PUBLIC key (g^a mod p) and sends it over the network.",
+        label: "Step 3: Alice computes her PUBLIC key (g^a mod p) by mixing her secret color with a public base color. She sends this mix over the network.",
         show: ['dh-a-pub'], arrows: ['dh-arr1'],
-        eve: "Eve sees: Alice's Public Key → g^a mod p = <b style='color:#4da6ff;'>82</b>"
+        eve: "Eve sees: Alice's Public Key → g^a mod p = <b style='color:#4da6ff;'>82</b> (A mixed color)"
     },
     {
-        label: "Step 4: Bob computes his PUBLIC key (g^b mod p) and sends it over the network.",
+        label: "Step 4: Bob computes his PUBLIC key (g^b mod p) similarly, and sends it back to Alice.",
         show: ['dh-b-pub'], arrows: ['dh-arr1', 'dh-arr2'],
-        eve: "Eve sees: A_pub=<b style='color:#4da6ff;'>82</b>, B_pub=<b style='color:#4da6ff;'>57</b>. Cannot compute K without knowing (a) or (b)."
+        eve: "Eve sees: A_pub=<b style='color:#4da6ff;'>82</b>, B_pub=<b style='color:#4da6ff;'>57</b>. She sees both mixed colors, but cannot unmix them to find the original secret colors."
     },
     {
-        label: "Step 5: Alice uses Bob's public key + her private key to compute the Shared Secret K.",
+        label: "Step 5: Alice mixes Bob's public key with her private key to compute the Shared Secret K (The Final Color).",
         show: ['dh-a-shared'], arrows: ['dh-arr1', 'dh-arr2'],
-        eve: "Eve still sees only public keys. She cannot solve the Discrete Log Problem to find K. 🔒"
+        eve: "Eve still sees only public mixed colors. She cannot solve the Discrete Log Problem (unmix the paint) to find K. 🔒"
     },
     {
-        label: "Step 6: Bob independently computes the SAME Shared Secret K. Both have K — it was NEVER transmitted!",
+        label: "Step 6: Bob independently mixes Alice's public key with his private key. They both arrive at the SAME Shared Secret K. It was NEVER transmitted!",
         show: ['dh-b-shared'], arrows: ['dh-arr1', 'dh-arr2'],
         eve: "Eve captures: A_pub=82, B_pub=57. She CANNOT compute K = (A_pub)^b mod p without b. ✅ DH is secure."
     }
@@ -239,19 +239,19 @@ function aesDecrypt() {
     if (aesTamper) {
         const tampered = d.ct.slice(0,-1) + ((d.ct.slice(-1)==='a')?'b':'a');
         setField('aes-recv-cipher', `Ciphertext (TAMPERED): <b>${tampered}</b>`, 'fail');
-        setField('aes-recv-tag',   `Auth Tag: <b>${d.tag}</b>`, 'tag');
+        setField('aes-recv-tag',   `Auth Tag (The Wax Seal): <b>${d.tag}</b>`, 'tag');
         setTimeout(() => {
-            setField('aes-result', `❌ AUTH TAG MISMATCH — DECRYPTION REJECTED`, 'fail');
+            setField('aes-result', `❌ WAX SEAL BROKEN — DECRYPTION REJECTED`, 'fail');
             document.getElementById('aes-step-label').textContent =
                 '💀 AES-GCM auth tag verification FAILED. Bob rejects the tampered message. Integrity preserved!';
         }, 600);
     } else {
         setField('aes-recv-cipher', `Ciphertext: <b>${d.ct}</b>`, 'cipher');
-        setField('aes-recv-tag',   `Auth Tag: <b>${d.tag}</b>`, 'tag');
+        setField('aes-recv-tag',   `Auth Tag (The Wax Seal): <b>${d.tag}</b>`, 'tag');
         setTimeout(() => {
             setField('aes-result', `✅ Plaintext: <b>"Hello Bob!"</b>`, 'plain');
             document.getElementById('aes-step-label').textContent =
-                '✅ AES-GCM decryption successful! Auth tag matched. Confidentiality + Integrity preserved.';
+                '✅ AES-GCM decryption successful! The wax seal (auth tag) was intact. Confidentiality + Integrity preserved.';
         }, 600);
     }
 }

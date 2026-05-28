@@ -113,7 +113,8 @@
     <div class="viz-section" id="sec-dh">
         <div class="viz-card">
             <h2>① Diffie–Hellman Key Exchange Visualizer</h2>
-            <p class="subtitle">Step through how Alice &amp; Bob establish a shared secret without ever transmitting it. The attacker sees only public values.</p>
+            <p class="subtitle">Step through how Alice &amp; Bob establish a shared secret without ever transmitting it. The attacker sees only public values.<br>
+            <strong style="color: #4da6ff;">🎨 Layman's Analogy:</strong> Think of this like mixing paint. Alice and Bob agree on a public color (Yellow). They each mix in their own secret color. The result is a unique shared color that an eavesdropper can't guess without knowing the secret colors!</p>
 
             <div class="dh-arena">
                 <!-- Alice -->
@@ -160,7 +161,8 @@
     <div class="viz-section" id="sec-aes">
         <div class="viz-card">
             <h2>② AES-GCM Encryption / Decryption Visualizer</h2>
-            <p class="subtitle">See how a message travels from plaintext → ciphertext → plaintext via AES-GCM authenticated encryption.</p>
+            <p class="subtitle">See how a message travels from plaintext → ciphertext → plaintext via AES-GCM authenticated encryption.<br>
+            <strong style="color: #4da6ff;">🔒 Layman's Analogy:</strong> Think of this as locking the message inside a heavy safe (Encryption) and sealing the safe with a tamper-evident wax seal (Auth Tag). If anyone scratches the safe, the seal breaks, and Bob rejects it!</p>
 
             <div class="aes-arena">
                 <!-- Sender -->
@@ -218,7 +220,8 @@
     <div class="viz-section" id="sec-fs">
         <div class="viz-card">
             <h2>③ Forward Secrecy / Key Rotation Timeline</h2>
-            <p class="subtitle">Each key window covers N messages. When the attacker steals the CURRENT key, past windows remain protected by Forward Secrecy.</p>
+            <p class="subtitle">Each key window covers N messages. When the attacker steals the CURRENT key, past windows remain protected by Forward Secrecy.<br>
+            <strong style="color: #4da6ff;">🔥 Layman's Analogy:</strong> Think of this as changing the locks on your house every 5 days and throwing the old keys into a volcano. If a burglar steals today's key, they still can't open the boxes from last week!</p>
 
             <div class="fs-timeline" id="fs-timeline">
                 <!-- Rendered by JS -->

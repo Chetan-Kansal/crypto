@@ -1,4 +1,6 @@
 import os
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from models.db import init_db, create_user, verify_user, get_user_by_id, get_all_users, save_message, get_messages
