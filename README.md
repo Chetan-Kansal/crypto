@@ -390,7 +390,7 @@ Run in Scyther GUI: Load either `.spdl` file → click **Verify Protocol**.
 ## 👥 Authors
 
 - **Gaurang Bhatia** — System design, cryptographic implementation, attack simulation
-- **Chetan** — Protocol verification, formal analysis, documentation
+- **Chetan Kansal, Eashaan Mulukunte** — Protocol verification, formal analysis, documentation
 
 ---
 
