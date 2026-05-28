@@ -17,7 +17,7 @@ class KeyManager:
     def __init__(self, dh_shared_secret, rotation_interval=5):
         # Step 3 Compliance: take DH shared secret, derive 256-bit AES key using HKDF + SHA-256
         self.current_key = derive_session_key(dh_shared_secret)
-        self.previous_key = None
+        self.old_keys = []
         self.message_count = 0
         self.rotation_interval = rotation_interval
 
@@ -25,7 +25,7 @@ class KeyManager:
         return self.current_key
         
     def get_decryption_keys(self):
-        return [self.current_key, self.previous_key]
+        return [self.current_key] + self.old_keys
 
     def get_state(self):
         """Returns visual state of the key manager for the frontend."""
@@ -44,9 +44,9 @@ class KeyManager:
     def rotate_key(self):
         """
         Derives a completely new session key from the current one using HKDF.
-        Retains only the immediate previous key for in-flight messages.
-        Older keys are discarded, providing Forward Secrecy.
+        NOTE: In a real app, old keys are discarded immediately for Forward Secrecy. 
+        For this demo, we retain them in memory so refreshing the page works.
         """
-        self.previous_key = self.current_key
+        self.old_keys.append(self.current_key)
         self.current_key = derive_session_key(self.current_key, salt=b'key_rotation')
         self.message_count = 0
