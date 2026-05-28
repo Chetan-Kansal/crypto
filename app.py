@@ -87,6 +87,9 @@ def on_join_attacker():
 def on_join_visualizer():
     join_room('visualizer_room')
 
+# ==========================================
+# 🔐 CORE CRYPTO LOGIC
+# ==========================================
 def get_crypto_session(sender_id, receiver_id):
     """Get or create a crypto session, emitting live DH events to the visualizer."""
     room = f"chat_{min(sender_id, receiver_id)}_{max(sender_id, receiver_id)}"
@@ -145,6 +148,7 @@ def get_crypto_session(sender_id, receiver_id):
 
 @socketio.on('send_message')
 def handle_send_message(data):
+    """Handles encrypting the message, key rotation, and broadcasting events."""
     sender_id       = session.get('user_id')
     sender_username = session.get('username')
     receiver_id     = data['receiver_id']
@@ -243,6 +247,9 @@ def handle_send_message(data):
 
 
 
+# ==========================================
+# 🔓 DECRYPTION ENDPOINT (Simulated Client)
+# ==========================================
 @app.route('/api/decrypt', methods=['POST'])
 def api_decrypt():
     if 'user_id' not in session:
@@ -281,6 +288,9 @@ def crypto_state(receiver_id):
         return jsonify(crypto_sessions[room].get_state())
     return jsonify({'fingerprint': 'NONE', 'messages_until_rotation': 5})
 
+# ==========================================
+# 🕵️ VISUALIZER & ATTACKER ROUTES
+# ==========================================
 @app.route('/visualizer')
 def visualizer():
     if 'user_id' not in session:
