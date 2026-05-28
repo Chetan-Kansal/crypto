@@ -158,8 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contentDiv.className = 'message-content';
         
         if (isEncrypted) {
-            contentDiv.textContent = "🔒 " + content.substring(0, 15) + "...";
-            contentDiv.style.fontFamily = 'monospace';
+            contentDiv.innerHTML = "<em>🔒 Decrypting...</em>";
             decryptMessage(contentDiv, content, senderId, receiverId);
         } else {
             contentDiv.textContent = content;
