@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function logPacket(action, details, isError = false) {
+        if (!packetLogs) return;
         const li = document.createElement('li');
         li.textContent = `[${new Date().toLocaleTimeString()}] ${action}: ${details}`;
         if (isError) li.style.color = '#ff4444';
