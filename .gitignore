@@ -48,3 +48,4 @@ logs/
 *.coverage
 .pytest_cache/
 htmlcov/
+test_data/
