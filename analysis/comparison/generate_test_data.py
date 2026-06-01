@@ -34,6 +34,9 @@ if __name__ == '__main__':
     # Generate 50-page text file (~150KB)
     generate_text_file('test_data/50_page.txt', 150)
     
+    # Generate 500-page text file (~1500KB)
+    generate_text_file('test_data/500_page.txt', 1500)
+    
     # Generate an image file (~20KB depending on compression)
     generate_image_file('test_data/sample_image.jpg')
     

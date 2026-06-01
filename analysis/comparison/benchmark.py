@@ -211,6 +211,7 @@ if __name__ == '__main__':
         'test_data/1_page.txt',
         'test_data/10_page.txt',
         'test_data/50_page.txt',
+        'test_data/500_page.txt',
         'test_data/sample_image.jpg'
     ]
     

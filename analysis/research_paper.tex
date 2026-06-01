@@ -63,10 +63,10 @@ The formal verification proved that our protocol maintains:
 To justify the use of ECC over legacy algorithms, we benchmarked our ECC implementation against custom RSA and ElGamal Key Encapsulation mechanisms. 
 
 \subsection{Methodology}
-The algorithms were evaluated on their Key Generation time, Key Encapsulation time, and Data Encryption time. Tests were run on standardized file sizes: 1-Page text (~6 KB), 10-Page text (~33 KB), 50-Page text (~151 KB), and a Multimedia Image (~1 MB). 
+The algorithms were evaluated on their Key Generation time, Key Encapsulation time, and Data Encryption time. Tests were run on standardized file sizes: 1-Page text (~6 KB), 10-Page text (~33 KB), 50-Page text (~151 KB), 500-Page text (~1.5 MB), and a Multimedia Image (~1 MB). 
 
 \subsection{Results}
-Our benchmarking revealed that the symmetric encryption time (AES) scales linearly with the file size, peaking at roughly ~2 MB of memory usage for a 1 MB image. The asymmetric operations remained constant regardless of file size.
+Our benchmarking revealed that the symmetric encryption time (AES) scales linearly with the file size, peaking at roughly ~3 MB of memory usage for a 1.5 MB text file. The asymmetric operations remained constant regardless of file size.
 
 As shown in our empirical data, ECC vastly outperformed the legacy alternatives. ECC Key Generation required $<0.001$ seconds, whereas RSA required approximately $0.03$ seconds. For Key Exchange, ElGamal proved highly inefficient requiring nearly $0.04$ seconds due to heavy modular exponentiation. Furthermore, ECC required a public key size of only 356 bytes, compared to 451 bytes for RSA, solidifying ECC as the optimal choice for bandwidth-constrained applications.
 
